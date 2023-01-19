@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/public/client.js"></script>
+    <title>Chat app</title>
+</head>
+
+<body>
+    </head>
+
+    <body>
+
+        <section class="chat_section">
+
+            <div class="brand">
+                <img src="/icon.png" alt="">
+                <h1>Chit Chat</h1>
+            </div>
+
+            <div class="message__area">
+
+            </div>
+            <textarea id="textarea" cols="38" rows="2" placeholder="Enter message"></textarea>
+            </div>
+        </section>
+
+        <link rel="stylesheet" href="/style.css">
+        <script src="/socket.io/socket.io.js"></script>
+        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+        <script>
+            const socket = io();
+            let name;
+            let users = {};
+            let textarea = document.querySelector('#textarea');
+            let messageArea = document.querySelector('.message__area')
+
+            do {
+                name = prompt('Please Enter your Name')
+            } while (!name)
+
+
+
+            textarea.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage(e.target.value)
+                }
+            })
+
+            function sendMessage(mssg) {
+                let msg = {
+                    user: name,
+                    message: mssg.trim()
+                }
+
+                //  append
+                appendMessage(msg, 'outgoing')
+                textarea.value = '';
+                scrollToBottom();
+
+                // send to server
+                socket.emit('message', msg)
+            }
+
+            function appendMessage(mssg, type) {
+                let mainDiv = document.createElement('div')
+                let className = type
+                mainDiv.classList.add(className, 'message')
+
+
+                let markup = `<h4>${mssg.user}</h4><p>${mssg.message}</p>`
+
+                mainDiv.innerHTML = markup
+                messageArea.appendChild(mainDiv);
+            }
+            //recieve message
+
+            socket.on('message', (msg) => {
+                appendMessage(msg, 'incoming');
+                scrollToBottom();
+            })
+
+            function scrollToBottom() {
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+        </script>
+
+    </body>
+
+</html>
