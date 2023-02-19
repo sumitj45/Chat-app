@@ -10,11 +10,11 @@ app.use(express.static(__dirname + '/public'))
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
-
-// socket connection
+//used socket.io for making connection btwn server and client..
+// socket connection and attaching  with http 
 const io = require('socket.io')(http)
 
-// making socket connection in server si
+// making socket connection in server si// passed event as first parameter and event listner as a second parameter
 io.on('connection', (socket) => {
 
     socket.on('message', (msg) => {
